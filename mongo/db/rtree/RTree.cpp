@@ -13,6 +13,8 @@
 #include <cmath>
 #include "RTree.h"
 
+bool didRun = false;
+
 using namespace std;
 
 RTree* RTree::theTree;

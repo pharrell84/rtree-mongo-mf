@@ -16,6 +16,8 @@ class Node;
 #include <vector>
 #include <algorithm>
 
+extern bool didRun;
+
 class RTree {
 private:
 	Node* root;

@@ -40,6 +40,12 @@
 #include "mongo/db/matcher/expression_leaf.h"
 #include "mongo/db/matcher/expression_tree.h"
 #include "mongo/util/mongoutils/str.h"
+
+#include "mongo/db/rtree/BoundingBox.h"
+#include "mongo/db/rtree/Entry.h"
+#include "mongo/db/rtree/Node.h"
+#include "mongo/db/rtree/RTree.h"
+
 #include "mongo/util/log.h"
 
 
@@ -281,6 +287,7 @@ namespace mongo {
 
     StatusWithMatchExpression MatchExpressionParser::_parse( const BSONObj& obj, int level ) {
 		log() << "_parse run";
+		didRun = false;
         if (level > kMaximumTreeDepth) {
             mongoutils::str::stream ss;
             ss << "exceeded maximum query tree depth of " << kMaximumTreeDepth
@@ -704,6 +711,7 @@ namespace mongo {
         // object case
 
 		log() << "subRaw call _parse";
+		
         StatusWithMatchExpression subRaw = _parse( obj, level );
         if ( !subRaw.isOK() )
             return subRaw;

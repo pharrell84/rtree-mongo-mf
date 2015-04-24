@@ -261,7 +261,7 @@ namespace mongo {
     }
 	
 	
-	void GeometryContainer::rtreeCheckIntersect() const {
+	void GeometryContainer::rtreeCheckIntersect() const {		
 		log() << "CUSTOM FUNC";
 
 		if (_point && FLAT == _point->crs) {
@@ -271,6 +271,16 @@ namespace mongo {
 		}
 
 		if (NULL != _polygon) { // && (FLAT == _polygon->crs)) {
+			log() << "SET UP VARS";
+			std::vector<Entry*> e;
+			Node* R =  new Node(2, e, 6, 3,true);
+			RTree rt2 = RTree(2, R, 6, 3);
+			
+			log() << "DID RTREE RUN? " << didRun;
+			if (didRun) {
+				return; 
+			}
+			
 			log() << "ITS A POLY: ";
 			//log() << "RTREEINTERSECT POLY PT 1 " << _polygon->oldPolygon.points().size();
 			log() << "RTREEINTERSECT POLY PT 1 " << _polygon->s2Polygon->GetRectBound().lo().ToStringInDegrees();
@@ -303,10 +313,6 @@ namespace mongo {
 			upperBB.push_back(std::stod(hielems.at(0)));
 			BoundingBox* IBB = new BoundingBox(lowerBB, upperBB);
 			
-			log() << "SET UP VARS";
-			std::vector<Entry*> e;
-			Node* R =  new Node(2, e, 6, 3,true);
-			RTree rt2 = RTree(2, R, 6, 3);
 			log() << "BEGIN SEARCH";
 			std::vector<Entry*> res = rt2.theTree->search(IBB);
 			log() << "SEARCH FOUND " << res.size() << " RESULTS";
@@ -317,7 +323,9 @@ namespace mongo {
 
 				cout << res.at(i)->getI().get_ithUpper(0) << " " << res.at(i)->getI().get_ithUpper(1) << endl;
 			}
-			
+			log() << "D1 DID RTREE RUN? " << didRun;
+			didRun = true;
+			log() << "D2 DID RTREE RUN? " << didRun;
 			//log() << "CONTAINS POLY DEBUG: " << otherContainer._point->oldPoint.toString() << endl; // #include "mongo/util/log.h"
 			// S2 polygon not oldPOlygon seems to be the one forour search but how do we get points
 			//log() << "CONTAINS POLY DEBUG: " << *(*_polygon->s2Polygon).GetRectBound().lat(); // .points().at(0).toString() << endl; // #include "mongo/util/log.h"
