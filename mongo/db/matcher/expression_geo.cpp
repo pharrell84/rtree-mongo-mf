@@ -329,7 +329,7 @@ log() << "praseNewQuery run";
     }
 
     bool GeoMatchExpression::matchesSingleElement( const BSONElement& e ) const {
-		log() << "THE ELE IS " << e.toString() << endl;
+		//log() << "THE ELE IS " << e.toString() << endl;
 		
         if ( !e.isABSONObj())
             return false;
@@ -349,19 +349,20 @@ log() << "praseNewQuery run";
         geometry.projectInto(_query->getGeometry().getNativeCRS());
 
 		if (GeoExpression::RTREEWITHIN == _query->getPred()) {
-			log() << "RTREEWITHIN WITH " << e.toString() << endl;
+			//log() << "RTREEWITHIN WITH " << e.toString() << endl;
+			_query->getGeometry().rtreeWithin();
 			return false; // _query->getGeometry().contains(geometry);
 		} else if (GeoExpression::WITHIN == _query->getPred()) { // || GeoExpression::RTREEWITHIN == _query->getPred()) {
-			log() << "WITHIN WITH " << e.toString() << endl;
+			//log() << "WITHIN WITH " << e.toString() << endl;
             return _query->getGeometry().contains(geometry);
 		}
 		else if (GeoExpression::RTREEINTERSECT == _query->getPred()) { 
-			log() << "RTREEINTERSECT WITH " << e.toString() << endl;
+			//log() << "RTREEINTERSECT WITH " << e.toString() << endl;
 			_query->getGeometry().rtreeCheckIntersect();
 			//log() << "RTREEINTERSECT POLY PT 1 " << _query->getGeometry()._polygon.oldPolygon.points().at(0) << endl;
 			return false;// _query->getGeometry().contains(geometry);
 		} else {
-			log() << "INTERSECT WITH " << e.toString() << endl;
+			//log() << "INTERSECT WITH " << e.toString() << endl;
 			verify(GeoExpression::INTERSECT == _query->getPred() || GeoExpression::RTREEINTERSECT == _query->getPred());
             return _query->getGeometry().intersects(geometry);
         }

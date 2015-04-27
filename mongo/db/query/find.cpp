@@ -603,10 +603,11 @@ namespace mongo {
             bb.skip(sizeof(QueryResult::Value));
 
             BSONObjBuilder cmdResBuf;
+
             if (!runCommands(txn, q.ns, q.query, curop, bb, cmdResBuf, false, q.queryOptions)) {
                 uasserted(13530, "bad or malformed command request?");
             }
-
+			
             curop.debug().iscommand = true;
             // TODO: Does this get overwritten/do we really need to set this twice?
             curop.debug().query = q.query;

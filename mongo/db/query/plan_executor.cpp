@@ -25,6 +25,8 @@
  *    exception statement from all source files in the program, then also delete
  *    it in the license file.
  */
+ 
+#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kCommand
 
 #include "mongo/db/query/plan_executor.h"
 
@@ -44,6 +46,7 @@
 #include "mongo/db/global_environment_experiment.h"
 #include "mongo/db/query/plan_yield_policy.h"
 #include "mongo/db/storage/record_fetcher.h"
+#include "mongo/util/log.h"
 
 #include "mongo/util/stacktrace.h"
 
@@ -336,7 +339,7 @@ namespace mongo {
 
             WorkingSetID id = WorkingSet::INVALID_ID;
             PlanStage::StageState code = _root->work(&id);
-
+			
             if (code != PlanStage::NEED_YIELD)
                 writeConflictsInARow = 0;
 

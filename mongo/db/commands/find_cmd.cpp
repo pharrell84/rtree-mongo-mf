@@ -132,8 +132,8 @@ namespace mongo {
         // Got the execution tree. Explain it.
         Explain::explainStages(exec.get(), verbosity, out);
 		
-		log() << "QUERY OBJ IS " << rawCq->getQueryObj().toString();
-		log() << "ROOT OBJ IS " << rawCq->root()->toString();
+		//log() << "QUERY OBJ IS " << rawCq->getQueryObj().toString();
+		//log() << "ROOT OBJ IS " << rawCq->root()->toString();
 		//GeoMatchExpression* gme = (GeoMatchExpression*) rawCq->root()
 		//log() << "GEO EXP IS " << gme->getGeoExpression().toString();
 		

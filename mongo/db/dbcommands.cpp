@@ -1529,7 +1529,9 @@ namespace mongo {
 
         c->_commandsExecuted.increment();
 
+		//log() << "EXEC CMD";
         retval = _execCommand(txn, c, dbname, cmdObj, queryOptions, errmsg, result, fromRepl);
+		//log() << "EXEC CMD END";
 
         if ( !retval ){
             c->_commandsFailed.increment();

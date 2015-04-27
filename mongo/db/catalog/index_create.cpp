@@ -161,20 +161,20 @@ namespace mongo {
             BSONObj info = indexSpecs[i];
 
             string pluginName = IndexNames::findPluginName( info["key"].Obj() );
-			log() << "PLUGIN IS " << pluginName;
+			//log() << "PLUGIN IS " << pluginName;
 			
 			// CUSTOM
 			if (pluginName == "test") {
 				// YOU SHOULD BE ABLE TO MAKE TE INDEX HERE
-				log() << "INX_CREATE NUM REC:" << _collection->numRecords(_txn);
+				//log() << "INX_CREATE NUM REC:" << _collection->numRecords(_txn);
 				RecordIterator* ri = _collection->getIterator(_txn);
 
 				std::vector<Entry*> initialEntries;
 
 				while (!ri->isEOF()) {
-					log() << "SEE ITEM";
+					//log() << "SEE ITEM";
 					RecordData recordData = ri->dataFor(ri->curr());
-					log() << "VALU IS " << recordData.toBson();
+					//log() << "VALU IS " << recordData.toBson();
 
 					std::vector<double> lower; std::vector<double> upper;
 					bool foundOK = false;
@@ -187,10 +187,12 @@ namespace mongo {
 						upper.push_back(recordData.toBson().getFieldDotted("loc")["lng"].Double()); upper.push_back(recordData.toBson().getFieldDotted("loc")["lat"].Double());
 						foundOK = true;
 					}
-					else { log() << "NOT OK LINE!"; }
+					else { 
+						//log() << "NOT OK LINE!"; 
+					}
 					if (recordData.toBson().getFieldDotted("loc")["type"].ok()) {
 						if (recordData.toBson().getFieldDotted("loc")["type"].String() == "Polygon") {
-							log() << "ITS A POLY"; // << recordData.toBson().getFieldDotted("loc")["rew"].Double();
+							//log() << "ITS A POLY"; // << recordData.toBson().getFieldDotted("loc")["rew"].Double();
 
 							lower.push_back(recordData.toBson().getFieldDotted("loc")["coordinates"].Array().at(0).Array().at(0).Array().at(0).Double());
 							lower.push_back(recordData.toBson().getFieldDotted("loc")["coordinates"].Array().at(0).Array().at(0).Array().at(1).Double());
@@ -200,7 +202,9 @@ namespace mongo {
 							foundOK = true;
 						}
 					}
-					else { log() << "NOT OK POLY!"; }
+					else { 
+						//log() << "NOT OK POLY!"; 
+					}
 
 					if (foundOK) {
 						std::unordered_map<int, std::string> newDoc;
@@ -216,6 +220,7 @@ namespace mongo {
 				int max = 6;
 				int min = 3;
 
+				log() << "RTRee creation has begun!";
 				//create a new Node, this will be the root node
 				std::vector<Entry*> newV;
 				Node* R = new Node(dimensions, newV, max, min, true);
@@ -223,10 +228,10 @@ namespace mongo {
 				RTree myIndex = RTree(dimensions, R, max, min);
 				//insert the entries we created into myIndex RTree
 				for (int i = 0; i<initialEntries.size(); i++){
-					log() << "started inserting entry " << i;
+					//log() << "started inserting entry " << i;
 					Entry* current = initialEntries.at(i);
 					myIndex.insert(current);
-					log() << "finished inserting entry " << i;
+					//log() << "finished inserting entry " << i;
 				}
 				log() << "inserted all initial entries!";
 				

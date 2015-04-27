@@ -50,8 +50,8 @@ namespace mongo {
 
 
     bool LeafMatchExpression::matches( const MatchableDocument* doc, MatchDetails* details ) const {
-		log() << "MATCH SINGLE ELEMTN LEAFMATCHEXPRESSION "; // << getGeoExpression()->getPred();
-		log() << "DOC IS " << doc->toBSON() ;
+		//log() << "MATCH SINGLE ELEMTN LEAFMATCHEXPRESSION "; // << getGeoExpression()->getPred();
+		//log() << "DOC IS " << doc->toBSON() ;
         MatchableDocument::IteratorHolder cursor( doc, &_elementPath );
         while ( cursor->more() ) {
             ElementIterator::Context e = cursor->next();

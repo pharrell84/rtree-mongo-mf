@@ -35,6 +35,7 @@ public:
 	void setMax(int M);
 	void setMin(int m);
 	std::vector<Entry*> search(BoundingBox* s);
+	std::vector<Entry*> searchIncludes(BoundingBox* s);
 	void insert(Entry* e);
 	Node* chooseLeaf(Entry* e);
 	void adjustTree(Node* L);

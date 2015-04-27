@@ -286,12 +286,13 @@ namespace mongo {
     }
 
     StatusWithMatchExpression MatchExpressionParser::_parse( const BSONObj& obj, int level ) {
-		log() << "_parse run";
+		log() << "BEGIN PARSE";
 		didRun = false;
         if (level > kMaximumTreeDepth) {
             mongoutils::str::stream ss;
             ss << "exceeded maximum query tree depth of " << kMaximumTreeDepth
                << " at " << obj.toString();
+			log() << "END PARSE";
             return StatusWithMatchExpression( ErrorCodes::BadValue, ss );
         }
 
@@ -371,8 +372,10 @@ namespace mongo {
                     // DBRef fields.
                     std::auto_ptr<ComparisonMatchExpression> eq( new EqualityMatchExpression() );
                     Status s = eq->init( e.fieldName(), e );
-                    if ( !s.isOK() )
+                    if ( !s.isOK() ) {
+						log() << "END PARSE";
                         return StatusWithMatchExpression( s );
+					}
 
                     root->add( eq.release() );
                 }

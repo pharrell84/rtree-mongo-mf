@@ -173,7 +173,7 @@ namespace mongo {
         member->loc = curr;
         member->obj = obj;
         member->state = WorkingSetMember::LOC_AND_UNOWNED_OBJ;
-
+	
         return returnIfMatches(member, id, out);
     }
 

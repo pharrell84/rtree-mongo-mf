@@ -72,6 +72,43 @@ std::vector<Entry*> RTree::search(BoundingBox* s){
 
 }
 
+std::vector<Entry*> RTree::searchIncludes(BoundingBox* s){
+	std::vector<Entry*> results;
+	std::vector<Entry*> entries = root->getEntries();
+
+	//cout << "WE ARE SEARCHING ON LOWER " << s->get_ithLower(0) << "," << s->get_ithLower(1) << endl;
+	//cout << "WE ARE SEARCHING ON UPPER " << s->get_ithUpper(0) << "," << s->get_ithUpper(1) << endl;
+
+	if (root->isLeaf()){
+		for (int i = 0; i<entries.size(); i++){
+			BoundingBox b = entries.at(i)->getI();
+			//cout << "CHECK OVERLAP FOR LOWER ROOT LEAF " << b.get_ithLower(0) << " " << b.get_ithLower(1) << endl;
+			//cout << "CHECK OVERLAP FOR UPPER ROOT LEAF " << b.get_ithUpper(0) << " " << b.get_ithUpper(1) << endl;
+				if (s->includes(b)){
+					results.push_back(entries.at(i));
+				}
+		}
+	}else{
+		cout << "CHECK OVERLAP FOR " << entries.size() << " ENTRIES" << endl;
+		for (int i = 0; i<entries.size(); i++){
+			BoundingBox b = entries.at(i)->getI();
+			//cout << "CHECK OVERLAP FOR LOWER " << b.get_ithLower(0) << " " << b.get_ithLower(1) << endl;
+			//cout << "CHECK OVERLAP FOR UPPER " << b.get_ithUpper(0) << " " << b.get_ithUpper(1) << endl;
+			if (s->overlaps(b)){
+				cout << "SAW OVERLAP, CREATE SUBTREE" << endl;
+				RTree* subTree = new RTree(num_dimen, entries.at(i)->getChildPointer(), maxim, minim);
+					std::vector<Entry*> tmpRes = subTree->search(s);
+					results.reserve(tmpRes.size());
+					results.insert(results.end(), tmpRes.begin(), tmpRes.end());
+					//results.addAll(subTree->search(s));
+				}
+		}
+	}
+
+	return results;
+
+}
+
 void RTree::insert(Entry* e){
 	Node* leaf = chooseLeaf(e);
 	//int numEnt = leaf->getEntries().size();

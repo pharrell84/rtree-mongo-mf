@@ -98,6 +98,7 @@ namespace mongo {
         bool contains(const GeometryContainer& otherContainer) const;
 		
 		void GeometryContainer::rtreeCheckIntersect() const;
+		void GeometryContainer::rtreeWithin() const;
 
         /**
          * To check intersection, we iterate over the otherContainer's geometries, checking each
