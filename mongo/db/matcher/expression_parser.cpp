@@ -286,7 +286,7 @@ namespace mongo {
     }
 
     StatusWithMatchExpression MatchExpressionParser::_parse( const BSONObj& obj, int level ) {
-		log() << "BEGIN PARSE";
+		//log() << "BEGIN PARSE";
 		didRun = false;
         if (level > kMaximumTreeDepth) {
             mongoutils::str::stream ss;

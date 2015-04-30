@@ -89,13 +89,13 @@ std::vector<Entry*> RTree::searchIncludes(BoundingBox* s){
 				}
 		}
 	}else{
-		cout << "CHECK OVERLAP FOR " << entries.size() << " ENTRIES" << endl;
+		//cout << "CHECK OVERLAP FOR " << entries.size() << " ENTRIES" << endl;
 		for (int i = 0; i<entries.size(); i++){
 			BoundingBox b = entries.at(i)->getI();
 			//cout << "CHECK OVERLAP FOR LOWER " << b.get_ithLower(0) << " " << b.get_ithLower(1) << endl;
 			//cout << "CHECK OVERLAP FOR UPPER " << b.get_ithUpper(0) << " " << b.get_ithUpper(1) << endl;
 			if (s->overlaps(b)){
-				cout << "SAW OVERLAP, CREATE SUBTREE" << endl;
+				//cout << "SAW OVERLAP, CREATE SUBTREE" << endl;
 				RTree* subTree = new RTree(num_dimen, entries.at(i)->getChildPointer(), maxim, minim);
 					std::vector<Entry*> tmpRes = subTree->search(s);
 					results.reserve(tmpRes.size());
@@ -139,12 +139,14 @@ void RTree::insert(Entry* e){
 	////cout << "Node's bounds: "
 }
 Node* RTree::chooseLeaf(Entry* e){
+	//cout << "choose leaf" << endl;
 	//bounding box of entry to be inserted
 	BoundingBox b = e->getI();
 
 	Node* N = root;
 	if (N->isLeaf()){
 		//cout << "root is a leaf, insert directly in root" << endl;
+		//cout << "end choose leaf" << endl;
 		return N;
 	}
 	else{
@@ -168,7 +170,7 @@ Node* RTree::chooseLeaf(Entry* e){
 			N = F->getChildPointer();
 		}
 
-
+		//cout << "end choose leaf" << endl;
 		return N;
 	}
 }
@@ -243,11 +245,13 @@ void RTree::adjustTree(Node* L){
 			//cout << "set new bounds for entry number " << i << " : " << newBounds.get_ithLower(0) << ", " << newBounds.get_ithLower(1) << " and " << newBounds.get_ithUpper(0) << ", " << newBounds.get_ithUpper(1) << endl;
 		}
 	}
+	
+	//cout << "end adjust tree node" << endl;
 }
 bool rootSplit = false;
 Node* lastSplit = NULL;
 void RTree::adjustTree(std::vector<Node*> newNodes) {
-	//cout << "inside adjustTree 2.." << endl;
+	//cout << "inside adjustTree vect" << endl;
 	Node* N = newNodes[0];
 	Node* NN = newNodes[1];
 	//cout << "ADJ TREE 2, IS ROOT IS " << root->equal(N) << endl;
@@ -295,12 +299,14 @@ void RTree::adjustTree(std::vector<Node*> newNodes) {
 			}
 			else{
 				P->addEntry(ENN);
+				//cout << "ABOUT TO SPLIT " << P;
 				std::vector<Node*> newP = splitNode(P);
 				adjustTree(newP);
 			}
 
 		}
 	}
+	//cout << "end adjusttree vector" << endl;
 }
 void RTree::deleteEntry(Entry* e){
 	Node* L = findLeaf(e);
@@ -319,15 +325,18 @@ void RTree::deleteEntry(Entry* e){
 }
 
 Node* RTree::findLeaf(Entry* e){
+	//cout << "begin find leaf" << endl;
 	BoundingBox EI = e->getI();
 	Node* T = root;
 	if (T->isLeaf()){
 		for (int i = 0; i<T->getEntries().size(); i++){
 			Entry* current = T->get_ithEntry(i);
 			if (e->equal(current)){
+				//cout << "end find leaf" << endl;
 				return T;
 			}
 		}
+		//cout << "end find leaf NULL" << endl;
 		return NULL;
 	}
 	else{
@@ -338,15 +347,20 @@ Node* RTree::findLeaf(Entry* e){
 				Node* newRoot = current->getChildPointer();
 				RTree* newSubTree = new RTree(num_dimen, newRoot, maxim, minim);
 				Node* F = newSubTree->findLeaf(e);
-				if (F != NULL){ return F; }
+				if (F != NULL){ 
+					//cout << "end find leaf" << endl;
+					return F; 
+				}
 			}
 
 		}
+		//cout << "end find leaf NULL" << endl;
 		return NULL;
 	}
 }
 
 void RTree::condenseTree(Node* L){
+	//cout << "begin condense tree" << endl;
 	Node* N = L;
 	std::vector<Node*> Q;
 	if (!root->equal(N)){
@@ -375,6 +389,8 @@ void RTree::condenseTree(Node* L){
 	// higher in the tree so that leaves of their dependent subtrees will be on the same level
 	// as leaves of the main tree.
 	//
+	
+	//cout << "end condens tree" << endl;
 }
 
 std::vector<Node*> RTree::splitNode(Node* n){
@@ -390,11 +406,16 @@ std::vector<Node*> RTree::splitNode(Node* n){
 	std::vector<Entry*> right;
 	right.push_back(rightSeed);
 	std::vector<Entry*> remaining = n->getEntries();
-	//cout << "SPLITNODE 5" << endl;
+	//cout << "SPLITNODE 5 LENGTH OF REMAINING IS " << remaining.size() << endl;
 	int pos = std::find(remaining.begin(), remaining.end(), rightSeed) - remaining.begin();
 	remaining.erase(remaining.begin() + pos);
+	//cout << "SPLITNODE 6 LENGTH OF REMAINING IS " << endl;
 	int lpos = std::find(remaining.begin(), remaining.end(), leftSeed) - remaining.begin();
-	remaining.erase(remaining.begin() + lpos);
+	//cout << "SPLITNODE 7 LPOS IS " << lpos << endl;
+	/*if (std::find(remaining.begin(), remaining.end(), leftSeed) == remaining.end()) {
+		cout << "SPLITNODE WAS ONT FOUND" << endl;		
+	}*/
+	remaining.erase(remaining.begin() + lpos); // peng error here
 	//cout << "SPLITNODE 8" << endl;
 	while (!remaining.empty()){
 		Entry* next = pickNext(right, left, remaining);
@@ -480,12 +501,12 @@ std::vector<Node*> RTree::splitNode(Node* n){
 		if (Node * node = entry->getChildPointer())
 			node->setParent(newLeft);
 	}
-
+	//cout << "splitnode end" << endl;
 	return result;
 }
 
 std::vector<Entry*> RTree::pickSeeds(Node* n){// Linear time version!
-	//cout << "PICKSEEDS START" << endl;
+	cout << "PICKSEEDS START" << endl;
 	std::vector<Entry*> entries = n->getEntries();
 	std::vector<double> dimenWidths;
 	std::vector<double> biggestSeps; //biggest separations along each dimension
@@ -493,6 +514,7 @@ std::vector<Entry*> RTree::pickSeeds(Node* n){// Linear time version!
 	std::vector<Entry*> highestEntries;// entries that had the highest lowside along each dimension
 	std::vector<double> normalizedSeps;
 	//cout << "PICKSEEDS LOOP BEGIN" << endl;
+	int prevLowInd = -1;
 	for (int i = 0; i<num_dimen; i++){
 		//cout << "PICKSEEDS LOOP RAN " << i << endl;
 		int indexOfHighestLow;
@@ -501,15 +523,25 @@ std::vector<Entry*> RTree::pickSeeds(Node* n){// Linear time version!
 		std::vector<double> dimHighs; // a list of all the highs ...
 		for (int j = 0; j<entries.size(); j++){
 			Entry* e = entries.at(j);
+			//cout << "BESTSEEDS " << entries.at(j)->getI().get_ithLower(i) << " AND " << entries.at(j)->getI().get_ithUpper(i) <<endl;
 			BoundingBox ei = e->getI();
-			dimLows.push_back(ei.get_ithLower(i));
-			dimHighs.push_back(ei.get_ithUpper(i));
+			if (prevLowInd != -1) {
+				if (!entries.at(prevLowInd)->getI().equal(ei)) {
+					dimLows.push_back(ei.get_ithLower(i));
+					dimHighs.push_back(ei.get_ithUpper(i));
+				} else {
+					//cout << "DONT CONSIDER THE SAME ONE" << endl;
+				}
+			} else {
+				dimLows.push_back(ei.get_ithLower(i));
+				dimHighs.push_back(ei.get_ithUpper(i));
+			}
 		}
 		double highestLow = *max_element(dimLows.begin(), dimLows.end());
 		double lowestHigh = *min_element(dimHighs.begin(), dimHighs.end());
 		indexOfHighestLow = find(dimLows.begin(), dimLows.end(), highestLow) - dimLows.begin();
 		indexOfLowestHigh = find(dimHighs.begin(), dimHighs.end(), lowestHigh) - dimHighs.begin();
-		//cout << "IOHL is " << indexOfHighestLow << endl;
+		//cout << "IOHL is " << indexOfHighestLow << " OF " << dimLows.size() << " IOLH is " << indexOfLowestHigh << " OF " << dimHighs.size() << endl;
 		//cout << "IOLH is " << indexOfLowestHigh << endl;
 		dimenWidths.push_back(abs(*max_element(dimHighs.begin(), dimHighs.end()) - *min_element(dimLows.begin(), dimLows.end())));
 		biggestSeps.push_back(highestLow - lowestHigh);
@@ -517,6 +549,7 @@ std::vector<Entry*> RTree::pickSeeds(Node* n){// Linear time version!
 		lowestEntries.push_back(entries.at(indexOfLowestHigh));
 		highestEntries.push_back(entries.at(indexOfHighestLow));
 		//cout << "LOWESTENTRIES AT 0 " << lowestEntries.at(0) << endl;
+		prevLowInd = indexOfLowestHigh; //&entries.at(indexOfLowestHigh)->getI();
 	}
 	//cout << "PICKSEEDS LOOP1 END" << endl;
 	for (int i = 0; i<num_dimen; i++){
@@ -525,18 +558,34 @@ std::vector<Entry*> RTree::pickSeeds(Node* n){// Linear time version!
 	}
 	//cout << "PICKSEEDS LOOP2 END" << endl;
 	std::vector<Entry*> bestSeeds;
-	double d = *max_element(normalizedSeps.begin(), normalizedSeps.end());
+	double d = *max_element(normalizedSeps.begin(), normalizedSeps.end());	
 	//cout << "PICKSEEDS FIND" << endl;
 	int indx = std::find(normalizedSeps.begin(), normalizedSeps.end(), d) - normalizedSeps.begin();
-	//cout << "PICKSEEDS FIND END INDEX IS " << indx << endl;
+	if (std::find(normalizedSeps.begin(), normalizedSeps.end(), d) == normalizedSeps.end()) {
+		//cout << "PICKSEEDS WAS NOT FOUND" << endl;		
+	}
+	
+	normalizedSeps.erase(normalizedSeps.begin() + indx);
+	double nextBestD = *max_element(normalizedSeps.begin(), normalizedSeps.end());	//
+	int nextBestIndex = std::find(normalizedSeps.begin(), normalizedSeps.end(), nextBestD) - normalizedSeps.begin();
+	if (nextBestIndex >= indx) { nextBestIndex += 1; }
+	
+	//cout << "BEST AND NB ARE " << indx << " AND " << nextBestIndex <<endl;
+	
+	cout.precision(10);
+	//cout << "PICKSEEDS FIND LE INDEX IS " << indx << " AND VEC IS " << lowestEntries.size() << endl;
 	bestSeeds.push_back(lowestEntries.at(indx));
-	//cout << "GOT LOWEST FOR INDX " << indx << endl;
+	//cout << "PICKSEEDS FIND HE INDEX IS " << indx << " AND VEC IS " << highestEntries.size() << endl;
 	bestSeeds.push_back(highestEntries.at(indx));
-	//cout << "PICKSEEDS BESTSEEDS SET" << endl;
+	
+	//cout << "BESTSEEDS " << bestSeeds.at(0)->getI().get_ithLower(0) << " AND " << bestSeeds.at(0)->getI().get_ithLower(1) <<endl;
+	//cout << "BESTSEEDS " << bestSeeds.at(1)->getI().get_ithLower(0) << " AND " << bestSeeds.at(1)->getI().get_ithLower(1) <<endl;
+	cout << "PICKSEEDS BESTSEEDS END" << endl;
 	return bestSeeds;
 }
 
 Entry* RTree::pickNext(std::vector<Entry*> right, std::vector<Entry*> left, std::vector<Entry*> remaining){// Quadratic time version! I felt the linear one was kinda silly.
+	//cout << "begin picknext" << endl;
 	Entry* critical = remaining[0];
 	double biggestDiff = 0;
 	for (Entry* e : remaining){
@@ -548,12 +597,13 @@ Entry* RTree::pickNext(std::vector<Entry*> right, std::vector<Entry*> left, std:
 			critical = e;
 		}
 	}
-
+	//cout << "end picknext" << endl;
 	return critical;
 }
 
 
 BoundingBox RTree::smallestBoundingBox(std::vector<Entry*> entries){
+	//cout << "begin sbb" << endl;
 	std::vector<double> Lower;
 	std::vector<double> Upper;
 	for (int i = 0; i< entries.front()->getNumDimen(); i++){
@@ -571,5 +621,6 @@ BoundingBox RTree::smallestBoundingBox(std::vector<Entry*> entries){
 		Upper.insert(Upper.begin() + i, newHigh);
 	}
 	BoundingBox result = BoundingBox(Lower, Upper);
+	//cout << "end sbb" << endl;
 	return result;
 }
