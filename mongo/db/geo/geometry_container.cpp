@@ -402,7 +402,7 @@ namespace mongo {
 	}
 
     bool GeometryContainer::contains(const GeometryContainer& otherContainer) const {
-		log() << "BEGIN CONTAINS DEBUG STUFF" << endl;
+		//log() << "BEGIN CONTAINS DEBUG STUFF" << endl;
 
         // First let's deal with the FLAT cases
 
@@ -436,7 +436,7 @@ namespace mongo {
 
         // Now we deal with all the SPHERE stuff.
 
-		log() << "NOT A FLAT CASE, CHECKING SPHERE";
+		//log() << "NOT A FLAT CASE, CHECKING SPHERE";
 
         // Iterate over the other thing and see if we contain it all.
         if (NULL != otherContainer._point) {
@@ -450,7 +450,7 @@ namespace mongo {
         }
 
         if (NULL != otherContainer._polygon) {
-			log() << "POLY ISNT NULL ";
+			//log() << "POLY ISNT NULL ";
             invariant(NULL != otherContainer._polygon->s2Polygon);
             return contains(*otherContainer._polygon->s2Polygon);
         }
