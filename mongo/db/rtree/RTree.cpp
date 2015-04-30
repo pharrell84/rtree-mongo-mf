@@ -506,7 +506,7 @@ std::vector<Node*> RTree::splitNode(Node* n){
 }
 
 std::vector<Entry*> RTree::pickSeeds(Node* n){// Linear time version!
-	cout << "PICKSEEDS START" << endl;
+	//cout << "PICKSEEDS START" << endl;
 	std::vector<Entry*> entries = n->getEntries();
 	std::vector<double> dimenWidths;
 	std::vector<double> biggestSeps; //biggest separations along each dimension
@@ -580,7 +580,7 @@ std::vector<Entry*> RTree::pickSeeds(Node* n){// Linear time version!
 	
 	//cout << "BESTSEEDS " << bestSeeds.at(0)->getI().get_ithLower(0) << " AND " << bestSeeds.at(0)->getI().get_ithLower(1) <<endl;
 	//cout << "BESTSEEDS " << bestSeeds.at(1)->getI().get_ithLower(0) << " AND " << bestSeeds.at(1)->getI().get_ithLower(1) <<endl;
-	cout << "PICKSEEDS BESTSEEDS END" << endl;
+	//cout << "PICKSEEDS BESTSEEDS END" << endl;
 	return bestSeeds;
 }
 

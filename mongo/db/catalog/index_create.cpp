@@ -230,10 +230,10 @@ namespace mongo {
 				for (int i = 0; i<initialEntries.size(); i++){
 					//log() << "started inserting entry " << i << " which has lat ";
 					Entry* current = initialEntries.at(i);
-					log() << "started inserting entry " << i << " which has lat " << current->getI().get_ithLower(0) << "," << current->getI().get_ithLower(1);
-					log() << "started inserting entry " << i << " which has lat " << current->getI().get_ithUpper(0) << "," << current->getI().get_ithUpper(1);
+					//log() << "started inserting entry " << i << " which has lat " << current->getI().get_ithLower(0) << "," << current->getI().get_ithLower(1);
+					//log() << "started inserting entry " << i << " which has lat " << current->getI().get_ithUpper(0) << "," << current->getI().get_ithUpper(1);
 					myIndex.insert(current);
-					log() << "finished inserting entry " << i;
+					//log() << "finished inserting entry " << i;
 				}
 				log() << "inserted all initial entries!";
 				
